@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Add Test Case - SmartTCMS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+  <div class="max-w-3xl mx-auto bg-white p-6 rounded shadow">
+    <h2 class="text-2xl font-bold mb-6">Add Test Case to "{{ project.title }}"</h2>
+
+    <form method="POST">
+      <!-- Title -->
+      <label class="block mb-2 font-medium">Title</label>
+      <input type="text" name="title" class="w-full border p-2 mb-4 rounded" required>
+
+      <!-- Module Name -->
+      <label class="block mb-2 font-medium">Module Name</label>
+      <input type="text" name="module_name" class="w-full border p-2 mb-4 rounded">
+
+      <!-- Priority -->
+      <label class="block mb-2 font-medium">Priority</label>
+      <select name="priority" class="w-full border p-2 mb-4 rounded" required>
+        <option value="Low">Low</option>
+        <option value="Medium" selected>Medium</option>
+        <option value="High">High</option>
+      </select>
+
+      <!-- Description -->
+      <label class="block mb-2 font-medium">Description</label>
+      <textarea name="description" class="w-full border p-2 mb-4 rounded"></textarea>
+
+      <!-- Preconditions -->
+      <label class="block mb-2 font-medium">Preconditions</label>
+      <textarea name="preconditions" class="w-full border p-2 mb-4 rounded"></textarea>
+
+      <!-- Execution Date (optional) -->
+      <label class="block mb-2 font-medium">Execution Date</label>
+      <input type="date" name="execution_date" class="w-full border p-2 mb-6 rounded">
+
+      <!-- Test Steps Section -->
+      <h3 class="text-lg font-bold mb-2 mt-6">Test Steps</h3>
+      <div id="steps-container">
+        <div class="step-block mb-4 border p-3 rounded bg-gray-50">
+          <label class="block font-medium">Step Description:</label>
+          <input type="text" name="step_description[]" class="w-full border p-2 rounded mb-2" required>
+
+          <label class="block font-medium">Test Data:</label>
+          <input type="text" name="step_data[]" class="w-full border p-2 rounded mb-2">
+
+          <label class="block font-medium">Expected Result:</label>
+          <input type="text" name="step_expected[]" class="w-full border p-2 rounded mb-2">
+
+          <button type="button" onclick="removeStep(this)" class="text-red-500 text-sm hover:underline">Remove Step</button>
+        </div>
+      </div>
+
+      <button type="button" onclick="addStep()"
+              class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 mb-6">
+        + Add Step
+      </button>
+
+      <!-- Submit -->
+      <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+        Create Test Case
+      </button>
+    </form>
+
+    <a href="/projects/{{ project.project_id }}" class="inline-block mt-6 text-sm text-blue-600 hover:underline">
+      ← Back to Project
+    </a>
+  </div>
+
+  <!-- Step Clone Script -->
+  <script>
+    function addStep() {
+      const container = document.getElementById('steps-container');
+      const first = container.querySelector('.step-block');
+      const clone = first.cloneNode(true);
+      clone.querySelectorAll('input').forEach(input => input.value = '');
+      container.appendChild(clone);
+    }
+
+    function removeStep(button) {
+      const container = document.getElementById('steps-container');
+      const block = button.closest('.step-block');
+      if (container.children.length > 1) {
+        block.remove();
+      }
+    }
+  </script>
+</body>
+</html>

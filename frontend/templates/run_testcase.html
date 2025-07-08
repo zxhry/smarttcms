@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Execute Steps</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    function addStepRow() {
+      const tableBody = document.getElementById('step-table-body');
+      const newRow = document.createElement('tr');
+      newRow.classList = "bg-white";
+
+      newRow.innerHTML = `
+        <td class="border p-2 text-center">New</td>
+        <td class="border p-2"><input type="text" name="description[]" class="w-full border rounded p-1"></td>
+        <td class="border p-2"><input type="text" name="test_data[]" class="w-full border rounded p-1"></td>
+        <td class="border p-2"><input type="text" name="expected_result[]" class="w-full border rounded p-1"></td>
+        <td class="border p-2"><input type="text" name="actual_result[]" class="w-full border rounded p-1"></td>
+        <td class="border p-2">
+          <select name="status[]" class="w-full border rounded p-1">
+            <option value="Not Run">Not Run</option>
+            <option value="Pass">Pass</option>
+            <option value="Fail">Fail</option>
+          </select>
+        </td>
+        <td class="border p-2"><input type="text" name="notes[]" class="w-full border rounded p-1"></td>
+        <input type="hidden" name="step_id[]" value="">
+      `;
+      tableBody.appendChild(newRow);
+    }
+  </script>
+</head>
+<body class="bg-gray-100 p-6">
+  <div class="max-w-6xl mx-auto bg-white p-6 rounded shadow">
+    <h2 class="text-xl font-bold mb-4">Execute Test Case</h2>
+
+    <form method="POST">
+      <div class="overflow-x-auto border border-gray-300 rounded">
+        <table class="min-w-full table-auto text-sm text-left border-collapse">
+          <thead class="bg-gray-200">
+            <tr>
+              <th class="border px-3 py-2 text-center">Step</th>
+              <th class="border px-3 py-2">Description</th>
+              <th class="border px-3 py-2">Test Data</th>
+              <th class="border px-3 py-2">Expected</th>
+              <th class="border px-3 py-2">Actual</th>
+              <th class="border px-3 py-2 text-center">Status</th>
+              <th class="border px-3 py-2">Notes</th>
+            </tr>
+          </thead>
+          <tbody id="step-table-body">
+            {% for step in steps %}
+            <tr class="bg-white">
+              <td class="border p-2 text-center">{{ step.step_number }}</td>
+              <td class="border p-2"><input type="text" name="description[]" value="{{ step.description }}" class="w-full border rounded p-1"></td>
+              <td class="border p-2"><input type="text" name="test_data[]" value="{{ step.test_data }}" class="w-full border rounded p-1"></td>
+              <td class="border p-2"><input type="text" name="expected_result[]" value="{{ step.expected_result }}" class="w-full border rounded p-1"></td>
+              <td class="border p-2"><input type="text" name="actual_result[]" value="{{ step.actual_result }}" class="w-full border rounded p-1"></td>
+              <td class="border p-2">
+                <select name="status[]" class="w-full border rounded p-1">
+                  <option value="Not Run" {% if step.status == "Not Run" %}selected{% endif %}>Not Run</option>
+                  <option value="Pass" {% if step.status == "Pass" %}selected{% endif %}>Pass</option>
+                  <option value="Fail" {% if step.status == "Fail" %}selected{% endif %}>Fail</option>
+                </select>
+              </td>
+              <td class="border p-2"><input type="text" name="notes[]" value="{{ step.notes }}" class="w-full border rounded p-1"></td>
+              <input type="hidden" name="step_id[]" value="{{ step.step_id }}">
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <button type="button" onclick="addStepRow()" class="mt-4 bg-yellow-500 text-black px-4 py-2 rounded hover:bg-yellow-600">
+        ➕ Add Step
+      </button>
+
+      <button type="submit" class="mt-4 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 ml-4">
+        💾 Save Steps
+      </button>
+    </form>
+
+    <a href="/testcases/{{ test_case_id }}" class="inline-block mt-6 text-blue-600 hover:underline text-sm">← Back to Test Case</a>
+  </div>
+</body>
+</html>
+

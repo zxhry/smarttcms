@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Edit Test Case - SmartTCMS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+  <div class="max-w-3xl mx-auto bg-white p-6 rounded shadow">
+    <h2 class="text-2xl font-bold mb-6">Edit Test Case "{{ testcase.title }}"</h2>
+
+    <form method="POST">
+      <!-- Title -->
+      <label class="block mb-2 font-medium">Title</label>
+      <input type="text" name="title" value="{{ testcase.title }}" class="w-full border p-2 mb-4 rounded" required>
+
+      <!-- Module Name -->
+      <label class="block mb-2 font-medium">Module Name</label>
+      <input type="text" name="module_name" value="{{ testcase.module_name or '' }}" class="w-full border p-2 mb-4 rounded">
+
+      <!-- Priority -->
+      <label class="block mb-2 font-medium">Priority</label>
+      <select name="priority" class="w-full border p-2 mb-4 rounded">
+        <option value="Low" {% if testcase.priority == 'Low' %}selected{% endif %}>Low</option>
+        <option value="Medium" {% if testcase.priority == 'Medium' %}selected{% endif %}>Medium</option>
+        <option value="High" {% if testcase.priority == 'High' %}selected{% endif %}>High</option>
+      </select>
+
+      <!-- Status -->
+      <label class="block mb-2 font-medium">Status</label>
+      <select name="status" class="w-full border p-2 mb-4 rounded">
+        <option value="Draft" {% if testcase.status == 'Draft' %}selected{% endif %}>Draft</option>
+        <option value="Pass" {% if testcase.status == 'Pass' %}selected{% endif %}>Pass</option>
+        <option value="Fail" {% if testcase.status == 'Fail' %}selected{% endif %}>Fail</option>
+        <option value="Reviewed" {% if testcase.status == 'Reviewed' %}selected{% endif %}>Reviewed</option>
+      </select>
+
+      <!-- Description -->
+      <label class="block mb-2 font-medium">Description</label>
+      <textarea name="description" class="w-full border p-2 mb-4 rounded">{{ testcase.description }}</textarea>
+
+      <!-- Preconditions -->
+      <label class="block mb-2 font-medium">Preconditions</label>
+      <textarea name="preconditions" class="w-full border p-2 mb-4 rounded">{{ testcase.preconditions }}</textarea>
+
+      <!-- Execution Date -->
+      <label class="block mb-2 font-medium">Execution Date</label>
+      <input type="date" name="execution_date" value="{{ testcase.execution_date }}" class="w-full border p-2 mb-6 rounded">
+
+      <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Update Test Case</button>
+    </form>
+
+    <a href="/testcases/{{ testcase.test_case_id }}" class="inline-block mt-6 text-sm text-blue-600 hover:underline">← Back to Test Case</a>
+  </div>
+</body>
+</html>

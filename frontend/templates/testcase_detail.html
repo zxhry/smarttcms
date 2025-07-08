@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{ testcase.title }} - SmartTCMS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6">
+
+  <!-- Header -->
+  <div class="flex justify-between items-center max-w-6xl mx-auto mb-6">
+    <div>
+      <h1 class="text-2xl font-bold">Test Case Manager</h1>
+      <p class="text-sm text-gray-600">Hello, {{ session['name'] }} ({{ session['role'] | capitalize }})</p>
+    </div>
+    <div class="flex gap-4 items-center">
+      <a href="/profile/edit" class="text-sm text-blue-600 hover:underline">✏️ Edit Profile</a>
+      <a href="/logout" class="text-sm text-red-600 hover:underline">🔓 Logout</a>
+    </div>
+  </div>
+
+  <!-- Test Case Overview -->
+  <div class="max-w-6xl mx-auto bg-white p-6 rounded shadow space-y-4">
+    <h2 class="text-xl font-semibold">{{ testcase.title }}</h2>
+
+    <div class="grid grid-cols-2 gap-4 text-sm">
+      <div>
+        <p><strong>Project:</strong> {{ testcase.project_title }}</p>
+        <p><strong>Module:</strong> {{ testcase.module_name or '—' }}</p>
+        <p><strong>Designed By:</strong> {{ testcase.tester }}</p>
+        <p><strong>Executed By:</strong> {{ testcase.executed_by or '—' }}</p>
+        <p><strong>Execution Date:</strong> {{ testcase.execution_date or '—' }}</p>
+      </div>
+      <div>
+        <p><strong>Status:</strong> {{ testcase.status or "Draft" }}</p>
+        <p><strong>Priority:</strong> {{ testcase.priority or "Medium" }}</p>
+        <p><strong>Created:</strong> {{ testcase.created_date.strftime('%Y-%m-%d') }}</p>
+        <p><strong>Last Modified:</strong> {{ testcase.modified_date.strftime('%Y-%m-%d') }}</p>
+      </div>
+    </div>
+
+    <hr>
+
+    <div>
+      <h3 class="font-semibold">Description</h3>
+      <p class="text-gray-800 text-sm">{{ testcase.description }}</p>
+    </div>
+
+    <div>
+      <h3 class="font-semibold">Preconditions</h3>
+      <p class="text-gray-800 text-sm">{{ testcase.preconditions }}</p>
+    </div>
+
+    <hr>
+
+    <!-- Test Steps -->
+    <h3 class="text-lg font-bold mt-6 mb-2">🧪 Test Steps</h3>
+    {% if steps %}
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm border border-gray-300">
+        <thead class="bg-gray-200">
+          <tr>
+            <th class="border px-2 py-1">Step</th>
+            <th class="border px-2 py-1">Description</th>
+            <th class="border px-2 py-1">Test Data</th>
+            <th class="border px-2 py-1">Expected</th>
+            <th class="border px-2 py-1">Actual</th>
+            <th class="border px-2 py-1">Status</th>
+            <th class="border px-2 py-1">Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for step in steps %}
+          <tr class="bg-white">
+            <td class="border px-2 py-1 text-center">{{ step.step_number }}</td>
+            <td class="border px-2 py-1">{{ step.description }}</td>
+            <td class="border px-2 py-1">{{ step.test_data }}</td>
+            <td class="border px-2 py-1">{{ step.expected_result }}</td>
+            <td class="border px-2 py-1">{{ step.actual_result or "—" }}</td>
+            <td class="border px-2 py-1 text-center">{{ step.status }}</td>
+            <td class="border px-2 py-1">{{ step.notes or "—" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="text-gray-500 text-sm">No test steps added.</p>
+    {% endif %}
+
+    <!-- Action Buttons -->
+    <div class="flex gap-4 mt-6">
+      {% if session['role'] == 'tester' and session['user_id'] == testcase.created_by %}
+      <a href="/testcases/{{ testcase.test_case_id }}/edit"
+         class="bg-yellow-400 text-black px-4 py-2 rounded hover:bg-yellow-500 text-sm">✏️ Edit</a>
+      {% endif %}
+
+      {% if session['role'] == 'tester' %}
+      <a href="/testcases/{{ testcase.test_case_id }}/steps"
+         class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">✅ Execute Steps</a>
+      {% endif %}
+
+      {% if session['role'] in ['tester', 'manager'] %}
+      <a href="/testcases/{{ testcase.test_case_id }}/download"
+         class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-black text-sm">🧾 Download PDF</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Developer Feedback -->
+  <div class="max-w-6xl mx-auto mt-6 bg-white p-6 rounded shadow">
+    <h3 class="text-lg font-bold mb-3">🛠 Developer Feedback</h3>
+
+    {% if feedbacks %}
+    <ul class="space-y-3">
+      {% for fb in feedbacks %}
+      <li class="bg-gray-50 border p-3 rounded">
+        <p class="text-sm text-gray-800">{{ fb.comment }}</p>
+        <p class="text-xs text-gray-500 mt-1">— {{ fb.username }}, {{ fb.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="text-sm text-gray-500">No feedback yet.</p>
+    {% endif %}
+
+    {% if session['role'] == 'developer' %}
+    <form method="POST" class="mt-4 space-y-3">
+      <textarea name="comment" rows="3" class="w-full border p-2 rounded text-sm" placeholder="Leave your comment..." required></textarea>
+      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">💬 Add Comment</button>
+    </form>
+    {% endif %}
+  </div>
+
+  <!-- Back Link -->
+  <div class="max-w-6xl mx-auto mt-6">
+    <a href="/projects/{{ testcase.project_id }}" class="text-blue-600 hover:underline text-sm">← Back to Project</a>
+  </div>
+
+</body>
+</html>

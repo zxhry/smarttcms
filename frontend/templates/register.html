@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Register - SmartTCMS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+  <div class="max-w-md mx-auto bg-white p-6 rounded shadow">
+    <h2 class="text-2xl font-bold mb-6 text-center">Register to SmartTCMS</h2>
+
+    <!-- ✅ Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="mb-4">
+          {% for category, message in messages %}
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-2">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- ✅ Registration Form -->
+    <form method="POST" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium">Full Name</label>
+        <input type="text" name="name" required class="w-full border p-2 rounded">
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium">Username</label>
+        <input type="text" name="username" required class="w-full border p-2 rounded">
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium">Password</label>
+        <input type="password" name="password" required class="w-full border p-2 rounded">
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium">Role</label>
+        <select name="role" required class="w-full border p-2 rounded">
+          <option value="">Select Role</option>
+          <option value="tester">Tester</option>
+          <option value="developer">Developer</option>
+          <option value="manager">Manager</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium">Organization</label>
+        <input type="text" name="organization" required class="w-full border p-2 rounded">
+      </div>
+
+      <div class="flex justify-between items-center">
+        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Register</button>
+        <a href="/login" class="text-sm text-blue-600 hover:underline">Already have an account?</a>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

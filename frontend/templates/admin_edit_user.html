@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Edit User - SmartTCMS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+  <div class="max-w-xl mx-auto bg-white p-6 rounded shadow">
+
+    <h2 class="text-xl font-semibold mb-4">✏️ Edit User</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="mb-4">
+          {% for category, message in messages %}
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" class="space-y-4">
+      <label class="block font-medium">Full Name</label>
+      <input type="text" name="name" value="{{ user.name }}" required class="w-full border p-2 rounded">
+
+      <label class="block font-medium">Role</label>
+      <select name="role" required class="w-full border p-2 rounded">
+        <option value="tester" {% if user.role == 'tester' %}selected{% endif %}>Tester</option>
+        <option value="developer" {% if user.role == 'developer' %}selected{% endif %}>Developer</option>
+        <option value="manager" {% if user.role == 'manager' %}selected{% endif %}>Manager</option>
+      </select>
+
+      <label class="block font-medium">Organization</label>
+      <input type="text" name="organization" value="{{ user.organization }}" required class="w-full border p-2 rounded">
+
+      <div class="flex justify-between items-center mt-6">
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Update User</button>
+        <a href="/admin/dashboard" class="text-sm text-blue-600 hover:underline">← Back to Dashboard</a>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

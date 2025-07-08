@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Execute Steps - SmartTCMS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6">
+  <div class="max-w-6xl mx-auto">
+
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6">
+      <div>
+        <h1 class="text-2xl font-bold">Execute Test Steps</h1>
+        <p class="text-sm text-gray-600">Hello, {{ session['name'] }} ({{ session['role'] | capitalize }})</p>
+      </div>
+      <div class="flex gap-4">
+        <a href="/profile/edit" class="text-sm text-blue-600 hover:underline">✏️ Edit Profile</a>
+        <a href="/logout" class="text-sm text-red-600 hover:underline">🔓 Logout</a>
+      </div>
+    </div>
+
+    <!-- Test Case Summary -->
+    <div class="bg-white rounded shadow p-6 mb-6">
+      <h2 class="text-xl font-semibold mb-2">{{ testcase.title }}</h2>
+      <p class="text-gray-600 text-sm">Project: {{ testcase.project_title }}</p>
+      <p class="text-gray-600 text-sm">Priority: {{ testcase.priority }}</p>
+      <p class="text-gray-600 text-sm">Module: {{ testcase.module_name }}</p>
+    </div>
+
+    <!-- Steps Execution Form -->
+    <form method="POST">
+      <div class="overflow-x-auto bg-white p-6 rounded shadow">
+        <table class="w-full text-sm border border-gray-300">
+          <thead class="bg-gray-200">
+            <tr>
+              <th class="border px-2 py-1">Step</th>
+              <th class="border px-2 py-1">Description</th>
+              <th class="border px-2 py-1">Test Data</th>
+              <th class="border px-2 py-1">Expected</th>
+              <th class="border px-2 py-1">Actual Result</th>
+              <th class="border px-2 py-1">Status</th>
+              <th class="border px-2 py-1">Notes</th>
+              <th class="border px-2 py-1" title="Tick to delete">🗑</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for step in steps %}
+            <tr>
+              <td class="border px-2 py-1 text-center">{{ step.step_number }}</td>
+              <td class="border px-2 py-1">
+                <input type="hidden" name="step_id[]" value="{{ step.step_id }}">
+                <input name="description[]" value="{{ step.description }}" class="w-full border rounded p-1">
+              </td>
+              <td class="border px-2 py-1">
+                <input name="test_data[]" value="{{ step.test_data }}" class="w-full border rounded p-1">
+              </td>
+              <td class="border px-2 py-1">
+                <input name="expected_result[]" value="{{ step.expected_result }}" class="w-full border rounded p-1">
+              </td>
+              <td class="border px-2 py-1">
+                <textarea name="actual_result[]" rows="2" class="w-full border rounded p-1">{{ step.actual_result or '' }}</textarea>
+              </td>
+              <td class="border px-2 py-1">
+                <select name="status[]" class="w-full border rounded p-1">
+                  <option value="Not Run" {% if step.status == "Not Run" %}selected{% endif %}>Not Run</option>
+                  <option value="Pass" {% if step.status == "Pass" %}selected{% endif %}>Pass</option>
+                  <option value="Fail" {% if step.status == "Fail" %}selected{% endif %}>Fail</option>
+                </select>
+              </td>
+              <td class="border px-2 py-1">
+                <textarea name="notes[]" rows="2" class="w-full border rounded p-1">{{ step.notes or '' }}</textarea>
+              </td>
+              <td class="border px-2 py-1 text-center">
+                <input type="checkbox" name="delete_step_ids[]" value="{{ step.step_id }}">
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Toggle Add Steps Button -->
+      <button type="button" id="toggleAddSteps" onclick="toggleStepForm()" class="bg-blue-600 text-white px-3 py-1 rounded text-sm mt-6 mb-2">
+        ➕ Add Steps
+      </button>
+
+      <!-- Hidden Add Steps Section -->
+      <div id="add-steps-section" class="hidden">
+        <h3 class="text-lg font-semibold mt-6 mb-2">➕ Add New Test Steps</h3>
+        <table class="w-full text-sm border border-gray-300 mb-4">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="border px-2 py-1">Description</th>
+              <th class="border px-2 py-1">Test Data</th>
+              <th class="border px-2 py-1">Expected Result</th>
+              <th class="border px-2 py-1">🗑</th>
+            </tr>
+          </thead>
+          <tbody id="new-steps-container">
+            <tr>
+              <td class="border p-1"><input name="new_step_description[]" class="w-full border rounded p-1"></td>
+              <td class="border p-1"><input name="new_step_data[]" class="w-full border rounded p-1"></td>
+              <td class="border p-1"><input name="new_expected_result[]" class="w-full border rounded p-1"></td>
+              <td class="border p-1 text-center"><button type="button" onclick="removeRow(this)">❌</button></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <button type="button" onclick="addNewStep()" class="bg-blue-600 text-white px-3 py-1 rounded text-sm mb-6">
+          ➕ Add Step Row
+        </button>
+      </div>
+
+      <script>
+        function toggleStepForm() {
+          const section = document.getElementById('add-steps-section');
+          const toggleBtn = document.getElementById('toggleAddSteps');
+
+          if (section.classList.contains('hidden')) {
+            section.classList.remove('hidden');
+            toggleBtn.textContent = '➖ Cancel Adding Steps';
+          } else {
+            section.classList.add('hidden');
+            toggleBtn.textContent = '➕ Add Steps';
+          }
+        }
+
+        function addNewStep() {
+          const container = document.getElementById('new-steps-container');
+          const row = `
+            <tr>
+              <td class="border p-1"><input name="new_step_description[]" class="w-full border rounded p-1"></td>
+              <td class="border p-1"><input name="new_step_data[]" class="w-full border rounded p-1"></td>
+              <td class="border p-1"><input name="new_expected_result[]" class="w-full border rounded p-1"></td>
+              <td class="border p-1 text-center"><button type="button" onclick="removeRow(this)">❌</button></td>
+            </tr>
+          `;
+          container.insertAdjacentHTML('beforeend', row);
+        }
+
+        function removeRow(btn) {
+          btn.closest('tr').remove();
+        }
+      </script>
+
+      <!-- Submit Button -->
+      <div class="mt-6 flex justify-end">
+        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-sm">💾 Save Execution</button>
+      </div>
+    </form>
+
+    <!-- Back Button -->
+    <div class="mt-4">
+      <a href="/testcases/{{ testcase.test_case_id }}" class="text-sm text-blue-600 hover:underline">← Back to Test Case</a>
+    </div>
+
+  </div>
+</body>
+</html>
+
+

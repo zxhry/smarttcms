@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Add User - Admin | SmartTCMS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+  <div class="max-w-xl mx-auto bg-white p-6 rounded shadow">
+
+    <h2 class="text-xl font-semibold mb-4">➕ Create New User</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="mb-4">
+          {% for category, message in messages %}
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" class="space-y-4">
+      <input type="text" name="name" placeholder="Full Name" required class="w-full border p-2 rounded">
+      <input type="text" name="username" placeholder="Username" required class="w-full border p-2 rounded">
+      <input type="password" name="password" placeholder="Password" required class="w-full border p-2 rounded">
+
+      <select name="role" required class="w-full border p-2 rounded">
+        <option value="">Select Role</option>
+        <option value="tester">Tester</option>
+        <option value="developer">Developer</option>
+        <option value="manager">Manager</option>
+      </select>
+
+      <input type="text" name="organization" placeholder="Organization" required class="w-full border p-2 rounded">
+
+      <div class="flex justify-between items-center">
+        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Create User</button>
+        <a href="/admin/dashboard" class="text-blue-600 text-sm hover:underline">← Back to Dashboard</a>
+      </div>
+    </form>
+  </div>
+</body>
+</html>
