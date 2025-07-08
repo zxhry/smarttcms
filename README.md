@@ -1,4 +1,4 @@
-# SmartTCMS - Test Case Management System
+# SmartTCMS
 
 SmartTCMS is a web-based Test Case Management System designed to help software teams efficiently organize and track test cases, execution status, and feedback. This system supports multi-role access (manager, tester, developer) and allows for test case editing and PDF export.
 
